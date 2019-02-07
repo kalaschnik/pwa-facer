@@ -4,10 +4,11 @@
   "description": "This is a Progressive Web App Instagram Clone",
   "lang": "en",
   "start_url": "/index.html",
-  "scope": ".",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#c4c4c4",
   "background_color": "#c4c4c4",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/src/images/icons/app-icon-48x48.png",
@@ -44,6 +45,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "orientation": "portrait-primary"
+  ]
 }
