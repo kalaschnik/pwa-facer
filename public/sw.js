@@ -6,6 +6,17 @@
 // you always get an event element from the lifecycle events
 self.addEventListener('install', (event) => {
   console.log('SW: Installing', event);
+
+  // caches open will open a give cache by name, if not found it will create it
+  // since async nature make sure that we install sw first and then cache using event.waitUntil
+  event.waitUntil(
+    caches.open('static')
+      .then((cache) => {
+        console.log('[sw.js] Precaching App Shell...');
+        // other add methods: https://developer.mozilla.org/en-US/docs/Web/API/Cache#Methods
+        cache.add('/src/js/app.js');
+      }),
+  );
 });
 
 self.addEventListener('activate', (event) => {
