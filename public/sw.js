@@ -23,7 +23,7 @@ self.addEventListener('fetch', (event) => {
   // fonts, etc. 💡 Rember it is a network proxy
   // or manually with a fetch request in App.js
 
-  console.log('SW: Fetching something', event);
+  // console.log('SW: Fetching something', event);
   // you can overwrite what should happen with the response
   // With this nothing happens (aka network only strategy)
   // https://youtu.be/DtuJ55tmjps?t=126

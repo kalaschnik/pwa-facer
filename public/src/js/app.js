@@ -4,7 +4,7 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('/sw.js') // path pointing to the sw. 💡 register (async) returns a promise
-    .then(res => console.log('SW registered!!', res))
+    .then(console.log('SW registered!!'))
     .catch(err => console.log('Boo!', err));
 } else {
   // Service Worker are not supported
