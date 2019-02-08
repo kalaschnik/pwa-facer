@@ -23,6 +23,7 @@ self.addEventListener('install', (event) => {
           '/src/css/feed.css',
           '/src/images/main-image.jpg',
           'https://fonts.googleapis.com/icon?family=Material+Icons',
+          // This is not working yet, we need dynamic caching:
           // 'https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css',
         ]);
       }),
@@ -54,6 +55,22 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request)
       // if caches object found return use cache, else normal network
       // https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
-      .then(response => response || fetch(event.request)),
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        // when there is no static cache, cache dynamically the input stream:
+        return fetch(event.request)
+          .then(res => caches.open('dynamic')
+            .then((cache) => {
+              // put(EventRequestURL, Store a Response clone)
+              cache.put(event.request.url, res.clone());
+              return res;
+            }))
+          // catching sw request errors
+          .catch((err) => {
+            // this helps to get warnings in sw.js
+          });
+      }),
   );
 });
