@@ -11,7 +11,7 @@ self.addEventListener('install', (event) => {
   // since async nature make sure that we install sw first and then cache using event.waitUntil
   event.waitUntil(
     // caches is the overall cache storage
-    caches.open('static-v2')
+    caches.open('static-v3')
       .then((cache) => {
         console.log('[sw.js] Precaching App Shell...');
         // other add methods: https://developer.mozilla.org/en-US/docs/Web/API/Cache#Methods
