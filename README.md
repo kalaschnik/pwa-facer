@@ -1,6 +1,7 @@
 <p align="center">
   <img src="public/src/images/pwa-facer-header-logo.png">
 </p>
+
 # PWA Facer
 *A Progressive WebApp (PWA) utilizing Microsoft’s Face API*
 PASTE SCREENSHOT (GIF) HERE
