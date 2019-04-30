@@ -1,6 +1,5 @@
-# PWA Facer
+# ![PWA Facer Logo](public/favicon-32x32.png) PWA Facer
 *A Progressive WebApp (PWA) utilizing Microsoft’s Face API*
-
 PASTE SCREENSHOT (GIF) HERE
 
 ## About
