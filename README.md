@@ -3,7 +3,7 @@
 PASTE SCREENSHOT (GIF) HERE
 
 ## About
-This project was part of the class *Knowledge- and Content Management* in the department of *Natural Language Processing*, held by Prof. Dr. Gerhard Heyer & Dr. Thomas Efer.
+This project was part of the class *Knowledge- and Content Management*  during winter term 18/19 in the department of *Natural Language Processing*, held by Prof. Dr. Gerhard Heyer & Dr. Thomas Efer at Leipzig University.
 
 This project consists of two components. (1) A Progressive Web App, which enables the user to take and store photos (of faces to fulfill the purpose), and (2) the capability to analyze faces in regards to various aspects, such as: *Age, Emotions, Gender, Pose, Smile, and Facial Hair*, etc.
 
