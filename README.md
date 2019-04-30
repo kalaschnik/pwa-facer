@@ -1,4 +1,7 @@
-# ![PWA Facer Logo](public/favicon-32x32.png) PWA Facer
+<p align="center">
+  <img src="public/src/images/pwa-facer-header-logo.png">
+</p>
+# PWA Facer
 *A Progressive WebApp (PWA) utilizing Microsoft’s Face API*
 PASTE SCREENSHOT (GIF) HERE
 
@@ -11,11 +14,6 @@ This project consists of two components. (1) A Progressive Web App, which enable
 ### Field of Application 
 As of June 2019 the app is being tested at the Max Planck Institute for Cognition and Brain Sciences (CBS) in Leipzig to code facial expressions as they may indicate emotions, such as the seven basic emotions defined by Ekman (i.e., Rage, Anger, Contempt, Disgust, Fear, Joy, Happiness, Sadness and Surprise)[1]. See also Darwin’s *The Expression of the Emotions in Man and Animals*[2]
 
-## Microsoft Face API
-The Face API is a subset of Microsoft’s Cognitive Services
-
-https://azure.microsoft.com/en-us/services/cognitive-services/face/
-
 ## Progressive Web Apps
 ### What is a Progressive Web App?
 A Progressive Web App (PWA) is a website that has many features that were previously reserved for native apps, such as: **working offline, push notifications, and device hardware access**. Thus, PWAs combine the flexibility of the web with the experience of a native application. 
@@ -27,7 +25,14 @@ https://serviceworke.rs/
 https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
 
 Although there a helper tools, most notably
-https://developers.google.com/web/tools/workbox/
+https://developers.google.com/web/tools/workbox/    
+
+## Microsoft Face API
+The Face API is a subset of Microsoft’s Cognitive Services
+
+https://azure.microsoft.com/en-us/services/cognitive-services/face/
+
+
 
 
 ## Replicate
