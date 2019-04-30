@@ -1,0 +1,6 @@
+extends: airbnb-base
+env:
+    browser: true
+    serviceworker: true
+rules: 
+    no-console: 0

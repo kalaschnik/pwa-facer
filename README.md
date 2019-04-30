@@ -23,6 +23,3 @@ https://azure.microsoft.com/en-us/services/cognitive-services/face/
 
 [2]: Darwin, C. (1872). The expression of the emotions in man and animals. London, England: John Murray.
 http://dx.doi.org/10.1037/10001-000
-
-
- 
