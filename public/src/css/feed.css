@@ -11,12 +11,6 @@
   display: none;
 }
 
-.main-image {
-  max-width: 100%;
-  margin: auto;
-  display: block;
-}
-
 .floating-button {
   z-index: 1000;
   position: fixed;

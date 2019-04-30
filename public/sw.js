@@ -21,7 +21,6 @@ self.addEventListener('install', (event) => {
           '/src/js/feed.js',
           '/src/css/app.css',
           '/src/css/feed.css',
-          '/src/images/main-image.jpg',
           'https://fonts.googleapis.com/icon?family=Material+Icons',
           // This is not working yet, we need dynamic caching:
           // 'https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css',
