@@ -1,7 +1,8 @@
 {
-  "name": "pwa-instagram-clone",
+  "name": "pwa-facer",
   "version": "0.9.0",
-  "description": "A PWA-based instagram clone",
+  "private": true,
+  "description": "A Progressive WebApp (PWA) utilizing Microsoft’s Face API",
   "main": "index.js",
   "scripts": {
     "start": "http-server -c-1"
@@ -10,7 +11,9 @@
     "progressive",
     "web",
     "app",
-    "pwa"
+    "pwa",
+    "cognitive services",
+    "face detection"
   ],
   "author": "Steven Kalinke",
   "license": "MIT",
