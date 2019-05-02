@@ -4,8 +4,9 @@
 
 // install event will fire when the browser installs the sw
 // you always get an event element from the lifecycle events
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', (event) => {
-  console.log('SW: Installing', event);
+  console.log('SW: Installing...', event);
 
   // caches open will open a give cache by name, if not found it will create it
   // since async nature make sure that we install sw first and then cache using event.waitUntil
@@ -29,6 +30,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('activate', (event) => {
   console.log('SW: Activated', event);
   // return self.clients.claim(); // this is only needed when activation fails...
@@ -38,10 +40,11 @@ self.addEventListener('activate', (event) => {
 // --------------------------
 // Service Worker Fetch Event
 // --------------------------
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
-  // fetch is getting triggered when the app fetches somehting
+  // fetch is getting triggered when the app fetches something
   // when assests get load (js), css, or images (img src)
-  // fonts, etc. 💡 Rember it is a network proxy
+  // fonts, etc. 💡 Remember it is a network proxy
   // or manually with a fetch request in App.js
 
   // console.log('SW: Fetching something', event);
@@ -52,8 +55,8 @@ self.addEventListener('fetch', (event) => {
   // respondWith expects a promise, fetch is returning one
   event.respondWith(
     caches.match(event.request)
-      // if caches object found return use cache, else normal network
-      // https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
+    // if caches object found return use cache, else normal network
+    // https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
       .then((response) => {
         if (response) {
           return response;

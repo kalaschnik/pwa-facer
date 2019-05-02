@@ -1,18 +1,19 @@
 // -----------------------
 // Register Service Worker
 // -----------------------
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/sw.js') // path pointing to the sw. 💡 register (async) returns a promise
-    .then(console.log('SW registered!!'))
-    .catch(err => console.log('Boo!', err));
-} else {
-  // Service Worker are not supported
-  console.log('Service Workers are not supported');
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
+      console.log('Registration successful, scope is:', registration.scope);
+    })
+    .catch((error) => {
+      console.log('Service worker registration failed, error:', error);
+    });
 }
 
-
 // make a global variable, since we want to use it in feed.js
+// eslint-disable-next-line no-unused-vars
 let deferredPrompt;
 
 // catch the add to homescreen prompt and re-define it
