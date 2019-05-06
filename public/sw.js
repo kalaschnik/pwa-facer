@@ -1,3 +1,6 @@
+const CACHE_STATIC_NAME = 'static-v6';
+const CACHE_DYNAMIC_NAME = 'dynamic-v2';
+
 // -------------------------------
 // Service Worker Lifecycle Events
 // -------------------------------
@@ -12,11 +15,12 @@ self.addEventListener('install', (event) => {
   // since async nature make sure that we install sw first and then cache using event.waitUntil
   event.waitUntil(
     // caches is the Cache API (as in DevTools -> Application -> Cache -> Cache Storage)
-    caches.open('static-v3')
+    caches.open(CACHE_STATIC_NAME)
       .then((cache) => {
-        console.log('SW: Precaching App Shell...');
+        console.log('SW: Pre-caching App Shell...');
         // other add methods: https://developer.mozilla.org/en-US/docs/Web/API/Cache#Methods
         return cache.addAll([
+          '/',
           '/index.html',
           '/src/js/app.js',
           '/src/js/feed.js',
@@ -34,9 +38,22 @@ self.addEventListener('install', (event) => {
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('activate', (event) => {
   console.log('SW: Activated', event);
+  console.log('Cleaning up old static cache...');
+
+  event.waitUntil(
+    caches.keys().then(keyList => Promise.all(
+      keyList.map((key) => {
+        if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+          console.log('SW: Removing old Cache', key);
+          return caches.delete(key);
+        }
+        // else
+        return null;
+      }),
+    )),
+  );
   // return self.clients.claim(); // this is only needed when activation fails...
 });
-
 
 // --------------------------
 // Service Worker Fetch Event
@@ -44,7 +61,7 @@ self.addEventListener('activate', (event) => {
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
   // fetch is getting triggered when the app fetches something
-  // when assests get load (js), css, or images (img src)
+  // when assets get load (js), css, or images (img src)
   // fonts, etc. 💡 Remember it is a network proxy
   // or manually with a fetch request in App.js
 
@@ -64,14 +81,14 @@ self.addEventListener('fetch', (event) => {
         }
         // when there is no static cache, cache dynamically the input stream:
         return fetch(event.request)
-          .then(res => caches.open('dynamic')
+          .then(res => caches.open(CACHE_DYNAMIC_NAME)
             .then((cache) => {
               // put(EventRequestURL, Store a Response clone)
               cache.put(event.request.url, res.clone());
               return res;
             }))
           // catching sw request errors
-          .catch((err) => {
+          .catch(() => {
             // this helps to get warnings in sw.js
           });
       }),
