@@ -1,5 +1,5 @@
-const CACHE_STATIC_NAME = 'static-v6';
-const CACHE_DYNAMIC_NAME = 'dynamic-v2';
+const CACHE_STATIC_NAME = 'static-v7a';
+const CACHE_DYNAMIC_NAME = 'dynamic-v3';
 
 // -------------------------------
 // Service Worker Lifecycle Events
@@ -84,7 +84,7 @@ self.addEventListener('fetch', (event) => {
           .then(res => caches.open(CACHE_DYNAMIC_NAME)
             .then((cache) => {
               // put(EventRequestURL, Store a Response clone)
-              cache.put(event.request.url, res.clone());
+              // cache.put(event.request.url, res.clone()); // turn of to demonstrate button cache
               return res;
             }))
           // catching sw request errors
