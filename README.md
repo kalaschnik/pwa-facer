@@ -130,6 +130,43 @@ self.addEventListener('fetch', (event) => {
 
 Which will lead to a `This site can’t be reached`.
 
+##### Retrieve Items from Cache
+
+To actually retrieve items that are already in the cache
+
+if caches object found return use cache, else normal network
+```
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+        // checks if valid response, since response can also be null
+        if (response) {
+          return response;
+        } else {
+        return fetch(event.request);
+         }
+      })
+  );
+});
+```
+
+or a bit shorter:
+
+```
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request);
+    })
+  );
+});
+```
+
+##### Dynamic Caching
+You can adjust the upper fetch request to also put unknown resources into the Cache API.
+TODO
+
+
 #### Caching Strategies
 When thinking about caching, first one need to identify what is the actual app shell. That are things which don’t change often:
 
