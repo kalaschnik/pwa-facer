@@ -2,6 +2,8 @@
   <img src="public/src/images/pwa-facer-header-logo.png">
 </p>
 
+# Git fetch
+
 # PWA Facer
 *A Progressive Web App (PWA) utilizing Microsoft’s Face API*
 
