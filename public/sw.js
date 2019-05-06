@@ -22,6 +22,7 @@ self.addEventListener('install', (event) => {
           '/src/js/feed.js',
           '/src/css/app.css',
           '/src/css/feed.css',
+          '/favicon-16x16.png',
           'https://fonts.googleapis.com/icon?family=Material+Icons',
           // This is not working yet, we need dynamic caching:
           // 'https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css',
@@ -58,7 +59,7 @@ self.addEventListener('fetch', (event) => {
     // if caches object found return use cache, else normal network
     // https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
       .then((response) => {
-        if (response) {
+        if (response) { // checks if valid response, since response can also be null
           return response;
         }
         // when there is no static cache, cache dynamically the input stream:
