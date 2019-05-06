@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const shareImageButton = document.querySelector('#share-image-button');
 const createPostArea = document.querySelector('#create-post');
 const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
@@ -15,7 +16,7 @@ function openCreatePostModal() {
       console.log(choiceResult.outcome);
 
       if (choiceResult === 'dismissed') {
-        console.log('User canceld installation!');
+        console.log('User ecanceled installation!');
       } else {
         console.log('User added to home screen');
       }
@@ -59,4 +60,4 @@ function createCard() {
 
 fetch('https://httpbin.org/get')
   .then(res => res.json())
-  .then(data => createCard());
+  .then(() => createCard());
