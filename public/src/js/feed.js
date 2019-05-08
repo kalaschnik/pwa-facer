@@ -35,6 +35,12 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
+function clearCards() {
+  while (sharedMomentsArea.hasChildNodes()) {
+    sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+  }
+}
+
 function createCard() {
   const cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
@@ -58,6 +64,27 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-fetch('https://httpbin.org/get')
+const url = 'https://httpbin.org/get';
+let networkDataReceived = false;
+
+// network request
+fetch(url)
   .then(res => res.json())
-  .then(() => createCard());
+  .then((data) => {
+    networkDataReceived = true;
+    console.log('From web: ', data);
+    clearCards();
+    createCard();
+  });
+
+// cache request
+caches.match(url).then((response) => {
+  if (!response) throw Error('No data');
+  return response.json;
+}).then((data) => {
+  console.log('From cache: ', data);
+  if (!networkDataReceived) {
+    clearCards();
+    createCard();
+  }
+});
