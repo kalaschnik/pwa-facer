@@ -230,14 +230,60 @@ When thinking about caching, first one need to identify what is the actual app s
 
 from: https://developers.google.com/web/fundamentals/architecture/app-shell
 
-The remainder of this section will give you a brief overview of (almost) all caching strategies using the "recommended" boilerplate code from Google Developers’ site
+The remainder of this section will give you a brief overview of (almost) all caching strategies using the "recommended" boilerplate code from Google Developers’ site.
+
+#### Cache, falling back to Network
+<p align="center">
+  <img src="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/images/ss-falling-back-to-network.png">
+</p>
+
+```
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+    // if caches object found return use cache, else normal network
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request)
+          .then(res => caches.open(CACHE_DYNAMIC_NAME)
+            .then((cache) => {
+              cache.put(event.request.url, res.clone());
+              return res;
+            }))
+          // If network fails provide offline fallback
+          .catch(() => {
+            return caches.open(CACHE_STATIC_NAME)
+              .then((cache) => {
+                return cache.match('/offline.html');
+              });
+          });
+      }),
+  );
+});
+```
+
+Note. The code above also provides the offline.html fallback. If there is no network and no cache match.
+
+#### Cache only
+<p align="center">
+<img src="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/images/ss-cache-only.png" alt="">
+</p>
+
+```
+self.addEventListener('fetch', function(event) {
+  // If a match isn't found in the cache, the response
+  // will look like a connection error
+  event.respondWith(caches.match(event.request));
+});
+```
 
 #### Network only
 <p align="center">
   <img src="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/images/ss-cache-only.png">
 </p>
 
-**Code**
 ```
 self.addEventListener('fetch', function(event) {
   event.respondWith(fetch(event.request));
@@ -246,6 +292,67 @@ self.addEventListener('fetch', function(event) {
 });
 ```
 
+#### Network falling back to cache
+<p align="center">
+  <img src="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/images/ss-network-falling-back-to-cache.png">
+</p>
+
+```
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    fetch(event.request).catch(function() {
+      return caches.match(event.request);
+    })
+  );
+});
+```
+
+#### Cache then network
+<p align="center">
+  <img src="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/images/ss-cache-then-network.png">
+</p>
+
+YourWebsite.js/.html
+
+```
+const url = 'https://website-you-want-to-fetch-data.com/get';
+let networkDataReceived = false;
+
+// network request
+fetch(url)
+  .then(res => res.json())
+  .then((data) => {
+    networkDataReceived = true;
+    console.log('From web: ', data);
+    clearCards();
+    createCard();
+  });
+
+// cache request
+caches.match(url).then((response) => {
+  if (!response) throw Error('No data');
+  return response.json;
+}).then((data) => {
+  console.log('From cache: ', data);
+  if (!networkDataReceived) {
+    clearCards();
+    createCard();
+  }
+});
+```
+
+sw.js
+```
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.open(CACHE_DYNAMIC_NAME)
+      .then(cache => fetch(event.request).then((response) => {
+        cache.put(event.request, response.clone());
+        return response;
+      })),
+  );
+});
+```
 
 ## Microsoft Face API
 The Face API is a subset of Microsoft’s Cognitive Services
