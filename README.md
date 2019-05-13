@@ -354,6 +354,8 @@ self.addEventListener('fetch', (event) => {
 });
 ```
 
+#### Mixing caching strategies, aka routing
+
 ## Microsoft Face API
 The Face API is a subset of Microsoft’s Cognitive Services
 
