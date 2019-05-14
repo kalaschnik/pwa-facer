@@ -154,7 +154,7 @@ self.addEventListener('fetch', (event) => {
             .catch(() => caches.open(CACHE_STATIC_NAME)
               .then((cache) => {
                 // check if the request is for the help.html
-                if (event.request.url.indexOf('/help')) {
+                if (event.request.headers.get('accept').includes('text/html')) {
                   return cache.match('/offline.html');
                 }
               }));
