@@ -22,5 +22,15 @@ function readData(store) {
       const tx = db.transaction(store, 'readonly');
       const myStore = tx.objectStore(store);
       return myStore.getAll();
-    })
+    });
+}
+
+function clearData(st) {
+  return dbPromise
+    .then((db) => {
+      const tx = db.transaction(st, 'readwrite');
+      const store = tx.objectStore(st);
+      store.clear();
+      return tx.complete;
+    });
 }

@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v16';
+const CACHE_STATIC_NAME = 'static-v19';
 const CACHE_DYNAMIC_NAME = 'dynamic-v2';
 const APP_SHELL = [
   '/',
@@ -127,17 +127,20 @@ self.addEventListener('fetch', (event) => {
 
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(fetch(event.request)
-      .then((res) => {
-        const clonedRes = res.clone().json()
-          .then((data) => {
-            for (let key in data) {
+      .then(function (res) {
+        var clonedRes = res.clone();
+        clearData('faces')
+          .then(function () {
+            return clonedRes.json();
+          })
+          .then(function (data) {
+            for (var key in data) {
               writeData('faces', data[key]);
             }
           });
         return res;
-      }),
+      })
     );
-    // check if there is something in the cache/app shell
   } else if (isInArray(event.request.url, APP_SHELL)) {
     // if so use only the cache
     event.respondWith(caches.match(event.request));
