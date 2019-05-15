@@ -41,30 +41,39 @@ function clearCards() {
   }
 }
 
-function createCard() {
+function createCard(data) {
   const cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   const cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
-  cardTitle.style.backgroundImage = 'url("/src/images/sf-boat.jpg")';
+  cardTitle.style.backgroundImage = `url(${data.image})`;
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   const cardTitleTextElement = document.createElement('h2');
-  cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.style.color = 'white';
-  cardTitleTextElement.textContent = 'San Francisco Trip';
+  cardTitleTextElement.className = 'mdl-card__title-text';
+  cardTitleTextElement.textContent = data.title;
   cardTitle.appendChild(cardTitleTextElement);
   const cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'In San Francisco';
+  cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
+  // var cardSaveButton = document.createElement('button');
+  // cardSaveButton.textContent = 'Save';
+  // cardSaveButton.addEventListener('click', onSaveButtonClicked);
+  // cardSupportingText.appendChild(cardSaveButton);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-const url = 'https://httpbin.org/get';
+function updateUI(data) {
+  clearCards();
+  data.map(e => createCard(e));
+}
+
+const url = 'https://pwa-facer.firebaseio.com/posts.json';
 let networkDataReceived = false;
 
 // network request
@@ -73,18 +82,22 @@ fetch(url)
   .then((data) => {
     networkDataReceived = true;
     console.log('From web: ', data);
-    clearCards();
-    createCard();
+    updateUI(Object.values(data));
   });
 
-// cache request
-caches.match(url).then((response) => {
-  if (!response) throw Error('No data');
-  return response.json;
-}).then((data) => {
-  console.log('From cache: ', data);
-  if (!networkDataReceived) {
-    clearCards();
-    createCard();
-  }
-});
+// if network fetch fails use cache:
+if ('caches' in window) {
+  caches.match(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('From cache: ', data);
+      if (!networkDataReceived) {
+        updateUI(Object.values(data));
+      }
+    });
+}

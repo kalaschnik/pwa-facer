@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v13';
+const CACHE_STATIC_NAME = 'static-v14';
 const CACHE_DYNAMIC_NAME = 'dynamic-v2';
 const APP_SHELL = [
   '/',
@@ -119,7 +119,7 @@ self.addEventListener('activate', (event) => {
 // finally use network
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
-  const url = 'https://httpbin.org/get';
+  const url = 'https://pwa-facer.firebaseio.com/posts.json';
 
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(
