@@ -1,5 +1,3 @@
-import { log } from "util";
-
 // idb.open(name, version, upgradeCallback)
 // eslint-disable-next-line no-var
 var dbPromise = idb.open('faces-store', 1, (upgradeDB) => {
