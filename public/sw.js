@@ -1,4 +1,7 @@
-const CACHE_STATIC_NAME = 'static-v14';
+importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
+
+const CACHE_STATIC_NAME = 'static-v16';
 const CACHE_DYNAMIC_NAME = 'dynamic-v2';
 const APP_SHELL = [
   '/',
@@ -6,6 +9,7 @@ const APP_SHELL = [
   '/offline.html',
   '/src/js/app.js',
   '/src/js/feed.js',
+  '/src/js/idb.js',
   '/src/css/app.css',
   '/src/css/feed.css',
   '/favicon-16x16.png',
@@ -122,12 +126,16 @@ self.addEventListener('fetch', (event) => {
   const url = 'https://pwa-facer.firebaseio.com/posts.json';
 
   if (event.request.url.indexOf(url) > -1) {
-    event.respondWith(
-      caches.open(CACHE_DYNAMIC_NAME)
-        .then(cache => fetch(event.request).then((response) => {
-          cache.put(event.request, response.clone());
-          return response;
-        })),
+    event.respondWith(fetch(event.request)
+      .then((res) => {
+        const clonedRes = res.clone().json()
+          .then((data) => {
+            for (let key in data) {
+              writeData('faces', data[key]);
+            }
+          });
+        return res;
+      }),
     );
     // check if there is something in the cache/app shell
   } else if (isInArray(event.request.url, APP_SHELL)) {

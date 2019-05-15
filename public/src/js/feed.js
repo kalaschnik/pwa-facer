@@ -85,19 +85,13 @@ fetch(url)
     updateUI(Object.values(data));
   });
 
-// if network fetch fails use cache:
-if ('caches' in window) {
-  caches.match(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    })
+// if network fetch fails use indexedDB:
+if ('indexedDB' in window) {
+  readData('faces')
     .then((data) => {
-      console.log('From cache: ', data);
       if (!networkDataReceived) {
-        updateUI(Object.values(data));
+        console.log('From IndexedDB: ', data);
+        updateUI(data);
       }
     });
 }
