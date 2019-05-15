@@ -356,6 +356,41 @@ self.addEventListener('fetch', (event) => {
 
 #### Mixing caching strategies, aka routing
 
+It is possible to combine different strategies for a more tailored experience.
+
+This approach fetches the network (if available). If not it will check the cache. To avoid race condition (if both network and cache has the item), the networkDataReceived variable is utilized.
+
+```
+const url = 'https://your-fire-base-project.firebaseio.com/posts.json';
+let networkDataReceived = false;
+
+// network request
+fetch(url)
+  .then(res => res.json())
+  .then((data) => {
+    networkDataReceived = true;
+    console.log('From web: ', data);
+    updateUI(Object.values(data));
+  });
+
+// if network fetch fails use cache:
+if ('caches' in window) {
+  caches.match(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('From cache: ', data);
+      if (!networkDataReceived) {
+        updateUI(Object.values(data));
+      }
+    });
+}
+```
+
 ## Microsoft Face API
 The Face API is a subset of Microsoft’s Cognitive Services
 
