@@ -1,49 +1,52 @@
-// idb.open(name, version, upgradeCallback)
-// eslint-disable-next-line no-var
-var dbPromise = idb.open('faces-store', 1, (upgradeDB) => {
-  // check if objectStore is already there, if not create it
-  if (!upgradeDB.objectStoreNames.contains('faces')) {
-    upgradeDB.createObjectStore('faces', { keyPath: 'id' });
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+const dbPromise = idb.open('posts-store', 1, function (db) {
+  if (!db.objectStoreNames.contains('posts')) {
+    db.createObjectStore('posts', { keyPath: 'id' });
+  }
+  if (!db.objectStoreNames.contains('sync-posts')) {
+    db.createObjectStore('sync-posts', { keyPath: 'id' });
   }
 });
 
-function writeData(store, data) {
+function writeData(st, data) {
   return dbPromise
-    .then((db) => {
-      const tx = db.transaction(store, 'readwrite');
-      tx.objectStore(store).put(data);
+    .then(function (db) {
+      var tx = db.transaction(st, 'readwrite');
+      var store = tx.objectStore(st);
+      store.put(data);
       return tx.complete;
     });
 }
 
-function readData(store) {
+function readAllData(st) {
   return dbPromise
-    .then((db) => {
-      const tx = db.transaction(store, 'readonly');
-      const myStore = tx.objectStore(store);
-      return myStore.getAll();
+    .then(function (db) {
+      var tx = db.transaction(st, 'readonly');
+      var store = tx.objectStore(st);
+      return store.getAll();
     });
 }
 
-function clearData(st) {
+function clearAllData(st) {
   return dbPromise
-    .then((db) => {
-      const tx = db.transaction(st, 'readwrite');
-      const store = tx.objectStore(st);
+    .then(function (db) {
+      var tx = db.transaction(st, 'readwrite');
+      var store = tx.objectStore(st);
       store.clear();
       return tx.complete;
     });
 }
 
 function deleteItemFromData(st, id) {
-  return dbPromise
-    .then((db) => {
-      const tx = db.transaction(st, 'readwrite');
-      const store = tx.objectStore(st);
+  dbPromise
+    .then(function (db) {
+      var tx = db.transaction(st, 'readwrite');
+      var store = tx.objectStore(st);
       store.delete(id);
       return tx.complete;
     })
-    .then(() => {
-      console.log('Item deleted');
+    .then(function () {
+      console.log('Item deleted!');
     });
 }

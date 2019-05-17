@@ -4,3 +4,4 @@ env:
     serviceworker: true
 rules: 
     no-console: 0
+    quote-props: ["error", "consistent-as-needed"]

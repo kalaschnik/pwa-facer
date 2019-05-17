@@ -3,6 +3,9 @@ const shareImageButton = document.querySelector('#share-image-button');
 const createPostArea = document.querySelector('#create-post');
 const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 const sharedMomentsArea = document.querySelector('#shared-moments');
+const form = document.querySelector('form');
+const titleInput = document.querySelector('#title');
+const locationInput = document.querySelector('#location');
 
 function openCreatePostModal() {
   createPostArea.classList.add('visible');
@@ -22,7 +25,6 @@ function openCreatePostModal() {
         console.log('User added to home screen');
       }
     });
-
     // set it to null, since you only can use it once
     deferredPrompt = null;
   }
@@ -32,8 +34,9 @@ function closeCreatePostModal() {
   createPostArea.classList.remove('visible');
 }
 
+// event listener for the + button to open the modal
 shareImageButton.addEventListener('click', openCreatePostModal);
-
+// event listner for the × button to close the modal
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 function clearCards() {
@@ -59,10 +62,6 @@ function createCard(data) {
   cardSupportingText.className = 'mdl-card__supporting-text';
   cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
-  // var cardSaveButton = document.createElement('button');
-  // cardSaveButton.textContent = 'Save';
-  // cardSaveButton.addEventListener('click', onSaveButtonClicked);
-  // cardSupportingText.appendChild(cardSaveButton);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
@@ -87,11 +86,71 @@ fetch(url)
 
 // if network fetch fails use indexedDB:
 if ('indexedDB' in window) {
-  readData('faces')
+  readAllData('posts')
     .then((data) => {
       if (!networkDataReceived) {
-        console.log('From IndexedDB: ', data);
+        console.log('From cache', data);
         updateUI(data);
       }
     });
 }
+
+// helper function to send data directly to the server
+function sendData() {
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+      image: 'https://firebasestorage.googleapis.com/v0/b/pwa-facer.appspot.com/o/profilepic.jpg?alt=media&token=6a937559-b1eb-42d1-a80f-359a09f7f4bd',
+    }),
+  })
+    .then((res) => {
+      console.log('Sent data', res);
+      updateUI();
+    });
+}
+
+// 💡 NOTE: Since there is no DOM access in the sw file...
+// ... you cannot listen to the form submission. Therefore ...
+// ... we trigger the sync event here in the feed.js
+// submit new face/post
+form.addEventListener('submit', (event) => {
+  // cancel the default submit behaviour
+  event.preventDefault();
+  closeCreatePostModal();
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    // what you want to store
+    const post = {
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+    };
+
+    // check if sw is installed and ready
+    navigator.serviceWorker.ready
+      .then((sw) => {
+        // 💡 the sync manger has no build in database, thats why we use IndexedDB with writeData
+        // in what objects store you want to store the data.
+        // returns a promise, when data was successfully written into IndexedDB
+        writeData('sync-posts', post)
+          // then you can register the sync event with a tag (sync-new-posts)
+          .then(() => sw.sync.register('sync-new-posts'))
+          .then(() => {
+            const snackbarContainer = document.querySelector('#confirmation-toast');
+            const data = { message: '💾 Your post was saved for syncing!' };
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+          })
+          .catch(err => console.log(err));
+      });
+  } else {
+    // if there is no service worker AND SyncManager available send data directly without sync event
+    sendData();
+  }
+});

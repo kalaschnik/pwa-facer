@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-undef */
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
@@ -106,7 +108,6 @@ self.addEventListener('activate', (event) => {
 //   );
 // });
 
-// // eslint-disable-next-line no-restricted-globals
 // self.addEventListener('fetch', (event) => {
 //   event.respondWith(
 //     caches.open(CACHE_DYNAMIC_NAME)
@@ -121,26 +122,23 @@ self.addEventListener('activate', (event) => {
 // use cache for given url first
 // then use general cache
 // finally use network
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
   const url = 'https://pwa-facer.firebaseio.com/posts.json';
 
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(fetch(event.request)
-      .then(function (res) {
-        var clonedRes = res.clone();
-        clearData('faces')
-          .then(function () {
-            return clonedRes.json();
-          })
-          .then(function (data) {
-            for (var key in data) {
-              writeData('faces', data[key]);
-            }
+      .then((res) => {
+        const clonedRes = res.clone();
+        clearAllData('posts')
+          .then(() => clonedRes.json())
+          .then((data) => {
+            Object.values(data).forEach((e) => {
+              writeData('posts', e);
+            });
           });
+        // return the actual response
         return res;
-      })
-    );
+      }));
   } else if (isInArray(event.request.url, APP_SHELL)) {
     // if so use only the cache
     event.respondWith(caches.match(event.request));
@@ -168,7 +166,52 @@ self.addEventListener('fetch', (event) => {
                 if (event.request.headers.get('accept').includes('text/html')) {
                   return cache.match('/offline.html');
                 }
+                // TODO return a default 404 site
               }));
+        }),
+    );
+  }
+});
+
+// the sync event listener will fire when connection is re-established
+// ... or it just fires immediately as soon as a new sync task was registered
+self.addEventListener('sync', (event) => {
+  console.log('👷: Background syncing', event);
+  // the event.tag corresponds with the name you registered (sw.sync.register('sync-new-posts'))
+  if (event.tag === 'sync-new-posts') {
+    console.log('👷: Syncing new Posts');
+    event.waitUntil(
+      // read all post that were stored in sync-posts by feed.js
+      readAllData('sync-posts')
+        // handle the response data
+        .then((data) => {
+          // loop over every item in the object store and POST it to the server
+          data.forEach((e) => {
+            fetch('https://pwa-facer.firebaseio.com/posts.json', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: JSON.stringify({
+                id: e.id,
+                title: e.title,
+                location: e.location,
+                image: 'https://firebasestorage.googleapis.com/v0/b/pwa-facer.appspot.com/o/profilepic.jpg?alt=media&token=6a937559-b1eb-42d1-a80f-359a09f7f4bd',
+              }),
+            })
+              .then((res) => {
+                console.log('☁ Sent data', res);
+                // data entry was sent, and if the res is ok (200–299) clean the entry ...
+                // ... from sync-posts store
+                if (res.ok) {
+                  deleteItemFromData('sync-posts', e.id);
+                }
+              })
+              .catch((err) => {
+                console.log('⚡ Error while sending data', err);
+              });
+          });
         }),
     );
   }
