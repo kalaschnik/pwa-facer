@@ -97,7 +97,7 @@ if ('indexedDB' in window) {
 
 // helper function to send data directly to the server
 function sendData() {
-  fetch(url, {
+  fetch('https://us-central1-pwa-facer.cloudfunctions.net/storePostData', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

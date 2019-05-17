@@ -187,7 +187,8 @@ self.addEventListener('sync', (event) => {
         .then((data) => {
           // loop over every item in the object store and POST it to the server
           data.forEach((e) => {
-            fetch('https://pwa-facer.firebaseio.com/posts.json', {
+            // here we are using our Firebase endpoint API
+            fetch('https://us-central1-pwa-facer.cloudfunctions.net/storePostData', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -205,7 +206,12 @@ self.addEventListener('sync', (event) => {
                 // data entry was sent, and if the res is ok (200–299) clean the entry ...
                 // ... from sync-posts store
                 if (res.ok) {
-                  deleteItemFromData('sync-posts', e.id);
+                  // extract the id from the response
+                  res.json()
+                    .then((resData) => {
+                      console.log(resData.id);
+                      deleteItemFromData('sync-posts', resData.id);
+                    });
                 }
               })
               .catch((err) => {
