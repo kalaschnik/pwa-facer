@@ -3,7 +3,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v19';
+const CACHE_STATIC_NAME = 'static-v23';
 const CACHE_DYNAMIC_NAME = 'dynamic-v2';
 const APP_SHELL = [
   '/',
@@ -221,4 +221,61 @@ self.addEventListener('sync', (event) => {
         }),
     );
   }
+});
+
+
+// react to actions notifications
+self.addEventListener('notificationclick', (event) => {
+  // grab the notification
+  const { notification } = event;
+  const { action } = event;
+
+  if (action === 'coffee') {
+    console.log('Coffee was chosen.');
+    notification.close();
+  } else {
+    console.log(action);
+    event.waitUntil(clients.matchAll()
+      .then((clis) => {
+        const client = clis.find(c => c.visibilityState === 'visible');
+
+        if (client !== undefined) {
+          client.navigate(notification.data.url);
+          client.focus();
+        } else {
+          clients.openWindow(notification.data.url);
+        }
+
+        notification.close();
+      }));
+  }
+});
+
+// react to close event (swipe away, click x, etc.)
+self.addEventListener('notificationclose', (event) => {
+  console.log('Notification was closed!', event);
+});
+
+
+// listen to push events coming from servers
+self.addEventListener('push', (event) => {
+  console.log('Push Message received!');
+
+  let data = { title: 'Dummy Title', content: 'Dummy Body', openURL: '/' };
+  if (event.data) {
+    data = JSON.parse(event.data.text());
+  }
+
+  const options = {
+    body: data.content,
+    icon: '/src/images/icons/logo-96.png',
+    badge: '/src/images/icons/logo-96.png',
+    data: {
+      url: data.openURL,
+    },
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
 });

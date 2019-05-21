@@ -11,3 +11,14 @@ html * { font-family: 'Inter UI', sans-serif; }
 .drawer-option {
   padding: 16px;
 }
+
+/* Hide the Enable Notification Button as the default */
+.enable-notifications {
+  display: none;
+}
+
+.reset-notifications {
+  font-size: x-large;
+  vertical-align: middle;
+  display: none;
+}
