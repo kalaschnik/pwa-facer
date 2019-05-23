@@ -5,7 +5,9 @@
 # PWA Facer
 *A Progressive Web App (PWA) utilizing Microsoft’s Face API*
 
-PASTE SCREENSHOT (GIF) HERE
+<p align="center">
+  <img src="public/src/images/demo.gif">
+</p>
 
 If you want to get a local copy, see [Replicate](#replicate)
 
