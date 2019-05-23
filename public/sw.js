@@ -3,13 +3,14 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v23';
-const CACHE_DYNAMIC_NAME = 'dynamic-v2';
+const CACHE_STATIC_NAME = 'static-v105';
+const CACHE_DYNAMIC_NAME = 'dynamic-v3';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/offline.html',
   '/src/js/app.js',
+  '/src/js/utility.js',
   '/src/js/feed.js',
   '/src/js/idb.js',
   '/src/css/app.css',
@@ -187,19 +188,20 @@ self.addEventListener('sync', (event) => {
         .then((data) => {
           // loop over every item in the object store and POST it to the server
           data.forEach((e) => {
+
+            // allows to send form data to a backend through ajax/fetch
+            const postData = new FormData();
+            postData.append('id', e.id);
+            postData.append('title', e.title);
+            postData.append('location', e.location);
+            postData.append('rawLocationLat', e.rawLocation.lat);
+            postData.append('rawLocationLng', e.rawLocation.lng);
+            postData.append('file', e.picture, `${e.id}.png`);
+
             // here we are using our Firebase endpoint API
             fetch('https://us-central1-pwa-facer.cloudfunctions.net/storePostData', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-              },
-              body: JSON.stringify({
-                id: e.id,
-                title: e.title,
-                location: e.location,
-                image: 'https://firebasestorage.googleapis.com/v0/b/pwa-facer.appspot.com/o/profilepic.jpg?alt=media&token=6a937559-b1eb-42d1-a80f-359a09f7f4bd',
-              }),
+              body: postData,
             })
               .then((res) => {
                 console.log('☁ Sent data', res);

@@ -6,10 +6,88 @@ const sharedMomentsArea = document.querySelector('#shared-moments');
 const form = document.querySelector('form');
 const titleInput = document.querySelector('#title');
 const locationInput = document.querySelector('#location');
+const videoPlayer = document.querySelector('#player');
+const canvasElement = document.querySelector('#canvas');
+const captureButton = document.querySelector('#capture-btn');
+const imagePicker = document.querySelector('#image-picker');
+const imagePickerArea = document.querySelector('#pick-image');
+let picture;
+const locationBtn = document.querySelector('#location-btn');
+const locationLoader = document.querySelector('#location-loader');
+let fetchedLocation = { lat: 0, lng: 0 };
+
+// location
+locationBtn.addEventListener('click', () => {
+  // hide the button and show the spinner
+  locationBtn.style.display = 'none';
+  locationLoader.style.display = 'block';
+
+  navigator.geolocation.getCurrentPosition((position) => {
+    locationBtn.style.display = 'inline';
+    locationLoader.style.display = 'none';
+    fetchedLocation = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+    document.querySelector('#manual-location').classList.add('is-focused');
+    locationInput.value = `Lat: ${fetchedLocation.lat}, Lng: ${fetchedLocation.lng}`;
+  }, (reject) => {
+    console.log('📋: reject', reject);
+    locationBtn.display.style = 'inline';
+    locationLoader.display.style = 'none';
+    fetchedLocation = 0;
+    const snackbarContainer = document.querySelector('#confirmation-toast');
+    const data = { message: '🛑 Couldn’t retrieve your position...' };
+    snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    fetchedLocation = { lat: 0, lng: 0 };
+  }, { timeout: 7000 });
+});
+
+// hide button if geolocation is not in navigator
+function initLocation() {
+  if (!('geolocation' in navigator)) {
+    locationBtn.style.display = 'none';
+  }
+}
+
+function initMedia() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+      videoPlayer.srcObject = stream;
+      videoPlayer.style.display = 'block';
+    })
+    .catch(() => {
+      imagePickerArea.style.display = 'block';
+    });
+}
+
+captureButton.addEventListener('click', () => {
+  canvasElement.style.display = 'block';
+  videoPlayer.style.display = 'none';
+  captureButton.style.display = 'none';
+  const context = canvasElement.getContext('2d');
+  context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
+  videoPlayer.srcObject.getVideoTracks().forEach((track) => {
+    track.stop();
+  });
+  picture = dataURItoBlob(canvasElement.toDataURL());
+});
+
+// change listener gets trigger when a file was selected
+imagePicker.addEventListener('change', (event) => {
+  // destructur assignment, same as: picture = event.target.files[0]
+  [picture] = event.target.files;
+});
 
 function openCreatePostModal() {
-  createPostArea.classList.add('visible');
+  setTimeout(() => {
+    createPostArea.classList.add('visible');
+  }, 1);
 
+  // initialize Media Area (Camera)
+  initMedia();
+
+  initLocation();
 
   // add Prompt to install to homescreen here
   if (deferredPrompt) {
@@ -31,7 +109,22 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-  createPostArea.classList.remove('visible');
+  imagePickerArea.style.display = 'none';
+  videoPlayer.style.display = 'none';
+  canvasElement.style.display = 'none';
+  locationBtn.style.display = 'inline';
+  locationLoader.style.display = 'none';
+  captureButton.style.display = 'inline';
+
+  // stop camera stream
+  if (videoPlayer.srcObject) {
+    videoPlayer.srcObject.getVideoTracks().forEach(track => track.stop());
+  }
+
+  // closing the camera stream is taking resources so with this track the closing animations remains
+  setTimeout(() => {
+    createPostArea.classList.remove('visible');
+  }, 1);
 }
 
 // event listener for the + button to open the modal
@@ -45,6 +138,12 @@ function clearCards() {
   }
 }
 
+function analyzeImage() {
+  const sourceImage = this.value.slice(4, -1).replace(/"/g, "");
+  console.log(sourceImage);
+  processImage(sourceImage);
+}
+
 function createCard(data) {
   const cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
@@ -53,6 +152,12 @@ function createCard(data) {
   cardTitle.style.backgroundImage = `url(${data.image})`;
   cardTitle.style.backgroundSize = 'cover';
   cardWrapper.appendChild(cardTitle);
+  const analyzeFaceBtn = document.createElement('button');
+  analyzeFaceBtn.setAttribute('value', cardTitle.style.backgroundImage);
+  analyzeFaceBtn.onclick = analyzeImage;
+  analyzeFaceBtn.className = 'mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--accent face-api';
+  analyzeFaceBtn.innerHTML = '<i class="material-icons">center_focus_strong</i>';
+  cardWrapper.appendChild(analyzeFaceBtn);
   const cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.style.color = 'white';
   cardTitleTextElement.className = 'mdl-card__title-text';
@@ -97,18 +202,18 @@ if ('indexedDB' in window) {
 
 // helper function to send data directly to the server
 function sendData() {
+  const id = new Date().toISOString()
+  const postData = new FormData();
+  postData.append('id', id);
+  postData.append('title', titleInput.value);
+  postData.append('location', locationInput.value);
+  postData.append('rawLocationLat', fetchedLocation.lat);
+  postData.append('rawLocationLng', fetchedLocation.lng);
+  postData.append('file', picture, `${id}.png`);
+
   fetch('https://us-central1-pwa-facer.cloudfunctions.net/storePostData', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify({
-      id: new Date().toISOString(),
-      title: titleInput.value,
-      location: locationInput.value,
-      image: 'https://firebasestorage.googleapis.com/v0/b/pwa-facer.appspot.com/o/profilepic.jpg?alt=media&token=6a937559-b1eb-42d1-a80f-359a09f7f4bd',
-    }),
+    body: postData,
   })
     .then((res) => {
       console.log('Sent data', res);
@@ -131,6 +236,8 @@ form.addEventListener('submit', (event) => {
       id: new Date().toISOString(),
       title: titleInput.value,
       location: locationInput.value,
+      picture,
+      rawLocation: fetchedLocation,
     };
 
     // check if sw is installed and ready

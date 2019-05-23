@@ -24,12 +24,22 @@
   margin: auto;
 }
 
-#create-post #pick-image {
+#create-post #pick-image, #create-post #location-loader {
   display: none;
 }
 
 #create-post #capture-btn {
   margin: 10px auto;
+}
+
+.face-api {
+  width: 40px;
+  height: 40px;
+  min-width: initial;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
 }
 
 .mdl-spinner {
