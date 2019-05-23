@@ -216,6 +216,9 @@ function sendData() {
     body: postData,
   })
     .then((res) => {
+      const snackbarContainer = document.querySelector('#confirmation-toast');
+      const data = { message: '☁ Upload complete!' };
+      snackbarContainer.MaterialSnackbar.showSnackbar(data);
       console.log('Sent data', res);
       updateUI();
     });

@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Help</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -51,7 +52,8 @@
             <a class="mdl-navigation__link" href="/">Feed</a>
             <a class="mdl-navigation__link" href="/settings">Settings</a>
             <div class="drawer-option">
-              <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
+              <button
+                class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
                 Enable Notifications
               </button>
             </div>
@@ -64,7 +66,8 @@
           <a class="mdl-navigation__link" href="/">Feed</a>
           <a class="mdl-navigation__link" href="/help">Help</a>
           <div class="drawer-option">
-            <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
+            <button
+              class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
               Enable Notifications
             </button>
           </div>
@@ -74,10 +77,32 @@
         <div class="mdl-grid">
           <div class="mdl-cell mdl-cell--12-col text-center">
             <h3>PWA Facer</h3>
-            <p>A Progressive Web App (PWA) utilizing Microsoft’s Face API</p>
-            <p>This project was part of the class Knowledge- and Content Management during winter term 18/19 in the department of Natural Language Processing, held by Prof. Dr. Gerhard Heyer & Dr. Thomas Efer at Leipzig University.
+            <h5>A Progressive Web App (PWA) utilizing Microsoft’s Face API</h5>
+            <h6>About</h6>
+            <p>This project was part of the class <em>Knowledge- and Content Management</em> during winter term 18/19 in
+              the
+              department of <em>Natural Language Processing</em>, held by <em>Prof Dr Gerhard Heyer & Dr Thomas
+                Efer</em> at Leipzig
+              University.
 
-                This project consists of two components. (1) A Progressive Web App, which enables the user to take and store photos (of faces to fulfill the purpose), and (2) the capability to analyze faces in regards to various aspects, such as: Age, Emotions, Gender, Pose, Smile, and Facial Hair, etc.</p>
+              This project consists of two components. (1) A Progressive Web App, which enables the user to take and
+              store photos (of faces to fulfill the purpose), and (2) the capability to analyze faces in regards to
+              various aspects, such as: Age, Emotions, Gender, Pose, Smile, and Facial Hair, etc. I was particular
+              interested in interpretation of emotions. Thus, only the basic emotions defined by Ekman[1] (i.e., Rage,
+              Anger, Contempt, Disgust, Fear, Joy, Happiness, Sadness and Surprise) will be presented in the output.</p>
+            <h6>Usage</h6>
+            When starting the first, the app shell will get cached. That means, as of now, when you reading these lines,
+            this app works fully offline (apart from sending the data to the server).
+            <p><strong>Analyze facial expressions</strong> is easy, as long as a face can be detected on the photo. Just
+              press the top left <i style="vertical-align: top;" class="material-icons">center_focus_strong</i> button
+              on a photo, and wait
+              a few seconds. A snackbar at the bottom will pop up for 5 seconds with the corresponding emotion evaluation.</p>
+            <p><strong>Taking photos</strong>. When you click the <i style="vertical-align: top;"
+                class="material-icons">add</i> button you’ll get asked to allow (1) Adding the site on your homescreen (recommended), which will "install" the website on your homescreen, (2) granting access to take pictures (recommended, yet if you don’t allow it an image picker will apear), and (3) by tapping get location, the browser will ask you accessing this information as well. Additionally, you can also opt in for Notifications and Push Messages. Then you get alerted when you (or somebody else) was uploading a picture. </p>
+            <p>[1]: Ekman, Paul (1999), Basic Emotions, in Dalgleish, T; Power, M (eds.), Handbook of Cognition and
+              Emotion (PDF), Sussex, UK: John Wiley & Sons</p>
+
+
           </div>
         </div>
         <!-- <div class="mdl-grid">
