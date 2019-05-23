@@ -407,32 +407,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You only need to have Node.js installed on your machine. Then follow the steps:
+You need to have a Firebase account, and NodeJs installed.
 
 ### Installing
 
-1. Clone the project and cd into it:
+TODO
 
-    ```
-    git clone https://github.com/Kalaschnik/pwa-facer.git
-    ```
-
-2. cd into it
-    ```
-    cd pwa-facer
-    ```
-3. install required packages, its only one: http-server
-    ```
-    npm install
-    ```
-4. start the project
-    ```
-    npm start
-    ```    
-5. Open browser
-    ```
-    http://localhost:8080
-    ```    
 ## Deployment
 Todo
 
